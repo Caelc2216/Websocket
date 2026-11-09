@@ -1,0 +1,2 @@
+1. The message is sent and recieved on all browser tabs that are connected to that socket. This happens because the WebSocket broadcasts the message to it.
+2. The message history disappears on refresh. This is because it hasn't been set up to be preserved in the code. 
