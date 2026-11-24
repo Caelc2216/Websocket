@@ -84,7 +84,7 @@ function App() {
       <p> Messages Received: {messages.length - messagesSent}</p>
       <div className="messages">
         {messages.length === 0 && <p className="empty">No messages yet. Open a second tab and say hello!</p>}
-        {messages.map((message, index) => <p className="message" key={index}>[{message.timestamp}] {message.name.trim() == "" ? "Unkown" : message.name}: {message.text}</p>)}
+        {messages.map((message, index) => <p className="message" key={index}>[{message.timestamp}] {message.name.trim() == "" ? "Unknown" : message.name}: {message.text}</p>)}
       </div>
       <div className="message-input">
         <input
