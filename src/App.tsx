@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 type Message = {
+  timestamp: string,
   name: string,
   text: string
 }
 
 function App() {
+  const [errorMessage, setErrorMessage] = useState("")
+  const [messagesSent, setMessagesSent] = useState(0)
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [name, setName] = useState("Unknown")
@@ -40,6 +43,10 @@ function App() {
   }, []);
 
   function sendMessage() {
+    setErrorMessage("")
+    if(input.trim() == ""){
+      setErrorMessage("text can't be empty")
+    }
     if (!input.trim()) return;
     const socket = socketRef.current;
     // 0-connecting
@@ -48,10 +55,12 @@ function App() {
     // closed
     if (socket?.readyState === WebSocket.OPEN) {
       const message = {
+        timestamp: new Date().toLocaleTimeString(),
         name: name.trim(),
         text: input.trim()
       }
       socket.send(JSON.stringify(message));
+      setMessagesSent(prev => prev + 1)
       setInput('');
     }
   }
@@ -72,9 +81,10 @@ function App() {
           
         ></input>
       </div>
+      <p> Messages Received: {messages.length - messagesSent}</p>
       <div className="messages">
         {messages.length === 0 && <p className="empty">No messages yet. Open a second tab and say hello!</p>}
-        {messages.map((message, index) => <p className="message" key={index}>{message.name}: {message.text}</p>)}
+        {messages.map((message, index) => <p className="message" key={index}>[{message.timestamp}] {message.name.trim() == "" ? "Unkown" : message.name}: {message.text}</p>)}
       </div>
       <div className="message-input">
         <input
@@ -85,6 +95,8 @@ function App() {
         />
         <button onClick={sendMessage} disabled={!connected}>Send</button>
       </div>
+        {!connected && <p style={{color: "red"}}>Cannot send message when disconnected</p>}
+        {errorMessage != "" && <p style={{color: "red"}}>{errorMessage}</p>}
     </div>
   );
 }
